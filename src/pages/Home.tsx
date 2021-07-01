@@ -31,7 +31,6 @@ const useStyles = makeStyles((theme: Theme) =>
       justifyContent: 'center',
       margin: 15,
     },
-
   }),
 );
 
@@ -55,11 +54,8 @@ export default function Home() {
           setLoading(true)
   };
 
-  const handleFilterChange = (event: FormEvent, filterValue: string | undefined) => {
-    event.preventDefault()
-
-    setFilterValue(filterValue)
-    console.log(filterValue)
+  const handleFilterChange = (event: { target: HTMLInputElement }, value: string) => {
+    setFilterValue(event.target.value)
   }
 
   const handleClick = async () => {
@@ -68,7 +64,9 @@ export default function Home() {
       axios.get(`${URL}?name=${filterValue}`)
         .then(res => {
           setCharacters(res.data.results)
+          setMyPage(res.data.info)
       })
+      setFilterValue('')
       setLoading(true)
     } catch(error) {
        history.push('/error')

@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux'
+import { selectFavorites, addFavorite, removeFavorite } from '../store/store'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import {
   Card,
@@ -49,6 +51,8 @@ type CharacterProps = {
 
 export default function MediaCard(props: CharacterProps ) {
   const classes = useStyles();
+  const favorites = useSelector(selectFavorites)
+  const dispatch = useDispatch()
   const [favorite, setFavorite] = useState<boolean>(true)
 
   const handleClick = () => {
