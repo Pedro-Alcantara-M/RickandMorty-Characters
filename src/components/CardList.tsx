@@ -1,6 +1,8 @@
+
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import Cards from '../components/Cards'
 import Pagination from '@material-ui/lab/Pagination';
+import { CharacterProps } from '../store/store'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -32,8 +34,9 @@ export type CardListProps = {
   count: number | undefined;
   page: number;
   pages?: number;
-  characters: [] | any;
+  characters: CharacterProps | any;
   onChange:  any;
+  onClick?: React.MouseEventHandler<HTMLDivElement> | any;
 }
 
 export default function CardList(props: CardListProps ) {
@@ -42,7 +45,7 @@ export default function CardList(props: CardListProps ) {
   return (
     <div>
       <div className={classes.cards}>
-      {props.characters.map((character: any) => (
+      {props.characters.map((character: CharacterProps) => (
         <Cards
         key={character.id}
         id={character.id}
@@ -50,7 +53,7 @@ export default function CardList(props: CardListProps ) {
         image={character.image}
         status={character.status}
         gender={character.gender}
-        origin={character.origin?.name}
+        origin={character.origin.name}
         species={character.species}
         starred={character.starred}
         />))}

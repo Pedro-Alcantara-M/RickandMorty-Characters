@@ -1,6 +1,5 @@
-import { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux'
-import { selectFavorites, addFavorite, removeFavorite } from '../store/store'
+import { useDispatch } from 'react-redux'
+import { addFavorite, removeFavorite } from '../store/store'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import {
   Card,
@@ -46,25 +45,26 @@ type CharacterProps = {
   status: string;
   species: string;
   gender: string;
-  origin: string;
+  origin: {
+    name:string;
+  } | any
   starred: boolean;
+  onClick?: React.MouseEventHandler<HTMLDivElement> | any;
 }
 
 export default function Cards(props: CharacterProps ) {
   const classes = useStyles();  
   const dispatch = useDispatch()
-  const favorites = useSelector(selectFavorites)
-  //const [starred, setStarred] = useState<boolean>(true)
 
-  const handleClick = () => {
+  const handleCardClick = () => {
     if (!props.starred) {
-       // setStarred(true)
-          dispatch(addFavorite({...props, starred: true}))
+        dispatch(addFavorite({...props, starred: true}))
     } else {
-    //  setStarred(false)
-      dispatch(removeFavorite(props.id))
+        dispatch(removeFavorite(props.id))
     }
   }
+
+ 
 
   return (
     <Card key={props.id} className={classes.root}>
@@ -74,7 +74,7 @@ export default function Cards(props: CharacterProps ) {
           title={props.name}
         />
         <CardActionArea>
-          <CardActions className={classes.icon} color="primary" onClick={handleClick}>
+          <CardActions className={classes.icon} color="primary" onClick={handleCardClick}>
               {props.starred
               ?  <StarIcon/>
               :  <StarBorderIcon />

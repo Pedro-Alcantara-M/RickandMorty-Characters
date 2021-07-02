@@ -1,13 +1,15 @@
 import { configureStore, createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-type CharacterProps = {
+export type CharacterProps = {
     id: number,
     name: string,
     image: string,
     status: string,
     species: string,
     gender: string,
-    origin: string,
+    origin:{
+      name: string,
+    },
     starred: boolean,
 }
 
