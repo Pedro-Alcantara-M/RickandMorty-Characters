@@ -8,10 +8,14 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
       display: 'flex',
+      flexDirection: 'column',
       justifyContent: 'center',
       alignItems: 'center',
-      flexWrap: 'wrap',
       flexGrow: 1,
+      background: theme.palette.grey[300],
+      margin: theme.spacing(1),
+      height: '100%',
+      minHeight: '83vh',
     },
   }),
 );

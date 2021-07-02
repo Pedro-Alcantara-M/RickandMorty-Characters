@@ -9,13 +9,8 @@ const useStyles = makeStyles((theme: Theme) =>
       display: 'flex',
       flexDirection: 'column',
       justifyContent: 'center',
-      alignItems: 'center',
-      flexGrow: 1,
+      alignItems:'center',
       gap: 20,
-      background: theme.palette.grey[300],
-      margin: theme.spacing(1),
-      height: '100%',
-      minHeight: '83vh',
     },
 
     message: {

@@ -1,9 +1,13 @@
-import { useState, useEffect, FormEvent } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios'
 import { useHistory } from "react-router-dom";
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { SpinnerRoundOutlined } from 'spinners-react';
-import FormFilter from '../components/FormFilter'
+import {
+  Input,
+  Button,
+} from '@material-ui/core'
+import SearchIcon from '@material-ui/icons/Search';
 import CardList, { CardListProps } from '../components/CardList';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -11,13 +15,11 @@ const useStyles = makeStyles((theme: Theme) =>
     root: {
       display: 'flex',
       flexDirection: 'column',
-      justifyContent: 'center',
-      alignItems: 'center',
-      flexGrow: 1,
-      background: theme.palette.grey[300],
-      margin: theme.spacing(1),
-      height: '100%',
-      minHeight: '83vh',
+      alignItems:'center',
+    },
+
+    form: {
+      margin: theme.spacing(2),
     },
 
     cards: {
@@ -41,11 +43,11 @@ export default function Home() {
   const [characters, setCharacters] = useState<CardListProps[]>([])
   const [page, setPage] = useState(1);
   const [myPage, setMyPage] = useState<CardListProps>();
-  const [filterValue, setFilterValue] = useState<string>()
+  const [filterValue, setFilterValue] = useState('')
 
   const URL = 'https://rickandmortyapi.com/api/character/'
 
-  const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
+  const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
     setPage(value)
     axios.get(`${URL}?page=${value}`)
           .then(res => {
@@ -54,16 +56,16 @@ export default function Home() {
           setLoading(true)
   };
 
-  const handleFilterChange = (event: { target: HTMLInputElement }, value: string) => {
-    setFilterValue(event.target.value)
-  }
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setFilterValue(event.target.value);
+  };
 
   const handleClick = async () => {
-    try{
-      await
+    try {
+      await 
       axios.get(`${URL}?name=${filterValue}`)
         .then(res => {
-          setCharacters(res.data.results)
+          setCharacters(adjustStarred(res.data.results))
           setMyPage(res.data.info)
       })
       setFilterValue('')
@@ -71,46 +73,50 @@ export default function Home() {
     } catch(error) {
        history.push('/error')
     }
-}
+  }
+  const adjustStarred = (data: any) => {
+    return data.map((char: any)=>({
+      ...char, 
+      starred: false
+    }))
+  }
 
-  const requestFunction = async () => {
-    try{
-    await 
+  const requestFunction = () => {
       axios.get(`${URL}`)
       .then(res => {
-        setCharacters(res.data.results)
+        setCharacters(adjustStarred(res.data.results))
         setMyPage(res.data.info)
       })
       setLoading(true)
-    } catch(error) {
-       console.log('deu erro')
-    }
   }
 
 useEffect(() => {
   requestFunction()
-
 }, [setCharacters, setMyPage])
-
 
   return (
     <div className={classes.root}>
     { loading ?
     <>
-      <FormFilter
-      value={filterValue}
-      onClick={handleClick}
-      onChange={handleFilterChange}
+      <form className={classes.form} noValidate autoComplete="off">
+      <Input 
+        placeholder="Character Name"
+        value={filterValue} 
+        onChange={handleChange}
       />
+      <Button onClick={handleClick}>
+         <SearchIcon/>
+      </Button>
+      </form>
       <CardList 
-      characters={characters}
-      count = {myPage?.pages}
-      page={page}
-      onChange={handleChange}
+        characters={characters}
+        count={myPage?.pages}
+        page={page}
+        onChange={handlePageChange}
       />
       </>
       :
-      <SpinnerRoundOutlined color='#3f51b5;' size='80'/>
+      <SpinnerRoundOutlined color='#3f51b5' size='80'/>
     }
     </div>
   )

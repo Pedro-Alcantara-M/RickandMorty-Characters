@@ -1,18 +1,21 @@
 import { configureStore, createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 type CharacterProps = {
-  id: string;
-  name: string,
-  image: string,
-  status: string,
-  species: string,
-  gender: string,
-  origin: string,
+    id: number,
+    name: string,
+    image: string,
+    status: string,
+    species: string,
+    gender: string,
+    origin: string,
+    starred: boolean,
 }
 
 type FavoriteProps = {
   favorites: CharacterProps[];
 }
+
+type RootState = ReturnType<typeof store.getState>
 
 const initialState: FavoriteProps = {
   favorites: [],
@@ -34,14 +37,18 @@ const favoriteSlice = createSlice({
           species: action.payload.species,
           gender: action.payload.gender,
           origin: action.payload.origin,
-        }
+          starred: action.payload.starred,
+        },
       ]
+      return state
      },
 
-     removeFavorite: (state, action: PayloadAction<string>) => {
+     removeFavorite: (state, action: PayloadAction<number>) => {
         state.favorites = state.favorites.filter(({id}) => id !== action.payload)
+        return state
      },
      },
+     
 })
 
 export const { addFavorite, removeFavorite } = favoriteSlice.actions
@@ -51,8 +58,6 @@ const store = configureStore({
     favorites: favoriteSlice.reducer,
   },
 })
-
-type RootState = ReturnType<typeof store.getState>
 
 export const selectFavorites = (state: RootState) => state.favorites.favorites
 

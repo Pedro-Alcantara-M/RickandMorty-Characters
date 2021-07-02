@@ -1,12 +1,11 @@
 import { useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { selectFavorites, addFavorite, removeFavorite } from '../store/store'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import {
   Card,
   CardActionArea, 
   CardActions,
-  Button,
   CardContent, 
   CardMedia, 
   Typography 
@@ -34,50 +33,52 @@ const useStyles = makeStyles((theme: Theme) =>
 
   icon: {
     position: 'absolute',
-    top: -180,
-    right: 0,
+    top: -175,
+    right: 20,
   },
 })
 )
 
 type CharacterProps = {
+  id: number;
   name: string;
   image: string;
   status: string;
   species: string;
   gender: string;
   origin: string;
+  starred: boolean;
 }
 
-export default function MediaCard(props: CharacterProps ) {
-  const classes = useStyles();
-  const favorites = useSelector(selectFavorites)
+export default function Cards(props: CharacterProps ) {
+  const classes = useStyles();  
   const dispatch = useDispatch()
-  const [favorite, setFavorite] = useState<boolean>(true)
+  const favorites = useSelector(selectFavorites)
+  //const [starred, setStarred] = useState<boolean>(true)
 
   const handleClick = () => {
-    if (favorite === true) {
-      setFavorite(false)
+    if (!props.starred) {
+       // setStarred(true)
+          dispatch(addFavorite({...props, starred: true}))
     } else {
-      setFavorite(true)
+    //  setStarred(false)
+      dispatch(removeFavorite(props.id))
     }
   }
 
   return (
-    <Card className={classes.root}>
+    <Card key={props.id} className={classes.root}>
         <CardMedia
           className={classes.media}
           image={props.image}
           title={props.name}
         />
         <CardActionArea>
-          <CardActions className={classes.icon}>
-            <Button size="small" color="primary" onClick={handleClick}>
-              {favorite 
-              ? <StarBorderIcon />
-              : <StarIcon/>
+          <CardActions className={classes.icon} color="primary" onClick={handleClick}>
+              {props.starred
+              ?  <StarIcon/>
+              :  <StarBorderIcon />
             }
-            </Button>
           </CardActions>
         </CardActionArea>
         <CardContent>

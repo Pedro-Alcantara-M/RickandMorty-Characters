@@ -28,8 +28,7 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-
- export type CardListProps = {
+export type CardListProps = {
   count: number | undefined;
   page: number;
   pages?: number;
@@ -46,20 +45,22 @@ export default function CardList(props: CardListProps ) {
       {props.characters.map((character: any) => (
         <Cards
         key={character.id}
+        id={character.id}
         name={character.name}
         image={character.image}
         status={character.status}
         gender={character.gender}
-        origin={character.origin.name}
+        origin={character.origin?.name}
         species={character.species}
+        starred={character.starred}
         />))}
        </div>
           <div className={classes.pagination} >
           <Pagination  
             color='primary'
-            count={props.count} 
-            page={props.page} 
-            onChange={props.onChange}
+            count={props?.count} 
+            page={props?.page} 
+            onChange={props?.onChange}
             />  
           </div>
       </div>

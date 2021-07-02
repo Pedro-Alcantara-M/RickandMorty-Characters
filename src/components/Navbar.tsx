@@ -13,26 +13,24 @@ const useStyles = makeStyles((theme: Theme) =>
       justifyContent: 'center',
       alignItems: 'center', 
 
-      [theme.breakpoints.down('sm')]: {
-        flexDirection: 'row',
-      },
-
-      '& h6': {
-        color: theme.palette.primary.contrastText,
-        
-        '& a':{
-          margin: theme.spacing(2),
-          textDecoration: 'none',
-          padding: 10,
-          borderRadius: 10,
-          whiteSpace: 'nowrap',
-
+      
+      
+      '& a':{
           '&:hover': {
             boxShadow: theme.shadows[2],
           },
-        }
       },
     },
+
+    link: {
+      color: theme.palette.primary.contrastText,
+      margin: 10,
+      textDecoration: 'none',
+      padding: 10,
+      borderRadius: 10,
+      whiteSpace: 'nowrap',
+    },
+
     menuButton: {
       marginRight: theme.spacing(2),
     },
@@ -40,7 +38,6 @@ const useStyles = makeStyles((theme: Theme) =>
       flexGrow: 1,
       fontSize: '2rem',
       marginRight: 'auto',
-
       
       '& > * + *': {
         marginLeft: theme.spacing(2),
@@ -62,10 +59,10 @@ export default function Navbar() {
       <AppBar position="static">
         <Toolbar className={classes.root}>
         <Typography variant="h6">
-            <NavLink exact to="/"  activeClassName={classes.active}>
+            <NavLink exact to="/" className={classes.link} activeClassName={classes.active}>
               Characters
             </NavLink>
-            <NavLink to="/favorites"  activeClassName={classes.active}>
+            <NavLink to="/favorites" className={classes.link}  activeClassName={classes.active}>
               Favorites Characters
             </NavLink>
             </Typography>
