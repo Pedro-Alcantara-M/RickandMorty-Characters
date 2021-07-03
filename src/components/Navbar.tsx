@@ -2,19 +2,18 @@ import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import {
   AppBar,
   Toolbar, 
-  Typography 
+  Badge,
 } from '@material-ui/core'
 import { NavLink } from 'react-router-dom'
+import logo from '../assets/rick-and-rorty.svg'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
       display: 'flex',
-      justifyContent: 'center',
       alignItems: 'center', 
+      gap: '28%',
 
-      
-      
       '& a':{
           '&:hover': {
             boxShadow: theme.shadows[2],
@@ -24,6 +23,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
     link: {
       color: theme.palette.primary.contrastText,
+      fontSize: '1.5rem',
       margin: 10,
       textDecoration: 'none',
       padding: 10,
@@ -31,17 +31,15 @@ const useStyles = makeStyles((theme: Theme) =>
       whiteSpace: 'nowrap',
     },
 
-    menuButton: {
-      marginRight: theme.spacing(2),
+    badge: {
+
+      '& span': {
+        transform: 'translate(70%, -50%)',
+      }
     },
-    title: {
-      flexGrow: 1,
-      fontSize: '2rem',
-      marginRight: 'auto',
-      
-      '& > * + *': {
-        marginLeft: theme.spacing(2),
-      },
+
+    img: {
+      width: 200,
     },
 
     active: {
@@ -53,19 +51,24 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export default function Navbar() {
   const classes = useStyles();
+  
+
 
   return (
     <div >
       <AppBar position="static">
         <Toolbar className={classes.root}>
-        <Typography variant="h6">
+          <img className={classes.img} src={logo} alt='Logo Rick and Morty'/>
+        <div>
             <NavLink exact to="/" className={classes.link} activeClassName={classes.active}>
               Characters
             </NavLink>
             <NavLink to="/favorites" className={classes.link}  activeClassName={classes.active}>
-              Favorites Characters
+              <Badge className={classes.badge} badgeContent={5} color="error"> 
+                Favorites Characters  
+              </Badge>
             </NavLink>
-            </Typography>
+        </div>
         </Toolbar>
       </AppBar>
     </div>

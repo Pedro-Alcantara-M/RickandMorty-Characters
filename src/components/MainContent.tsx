@@ -14,7 +14,7 @@ const useStyles = makeStyles((theme: Theme) =>
       flexGrow: 1,
       background: theme.palette.grey[300],
       height: '100%',
-      minHeight: '83vh',
+      minHeight: '81vh',
     },
   }),
 );

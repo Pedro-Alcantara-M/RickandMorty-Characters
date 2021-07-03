@@ -64,8 +64,6 @@ export default function Cards(props: CharacterProps ) {
     }
   }
 
- 
-
   return (
     <Card key={props.id} className={classes.root}>
         <CardMedia

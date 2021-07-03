@@ -1,9 +1,6 @@
 import axios from 'axios'
 import { useState, useEffect } from 'react';
 import { useHistory } from "react-router-dom";
-import { useSelector, useDispatch } from 'react-redux'
-import { addCharacters, removeCharacters } from '../store/store'
-import { selectCharacters } from '../store/store'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { SpinnerRoundOutlined } from 'spinners-react';
 import {
@@ -61,13 +58,11 @@ const useStyles = makeStyles((theme: Theme) =>
 export default function Home() {
   const classes = useStyles();
   const history = useHistory();
-  const dispatch = useDispatch()
-  const characters = useSelector(selectCharacters)
-  const [loading, setLoading] = useState<boolean>(false)
+  const [loading, setLoading] = useState<boolean>(true)
   const [statusValue, setStatusValue] = useState<string>('')
   const [genderValue, setGenderValue] = useState<string>('')
-  //const [characters, setCharacters] = useState<CardListProps[]>([])
   const [page, setPage] = useState(1);
+  const [characters, setCharacters] = useState<CardListProps[]>([])
   const [myPage, setMyPage] = useState<CardListProps>();
   const [filterValue, setFilterValue] = useState('')
 
@@ -77,10 +72,10 @@ export default function Home() {
   const handleChange = (value: number) => {
     setPage(value)
     axios.get(`${URL}?page=${value}&${URLFilter}`)
-      .then(res => {
-        //setCharacters(res.data.results)
-      })
-    setLoading(true)
+    .then(res => {
+      setCharacters(res.data.results)
+    })
+    setLoading(false)
   };
 
   const handleNameChange = (event: React.ChangeEvent<HTMLInputElement> | any) => {
@@ -96,25 +91,25 @@ export default function Home() {
 
   const handleRefreshClick = () => {
     axios.get(`${URL}`)
-      .then(res => {
-        //    setCharacters(adjustStarred(res.data.results))
-        setMyPage(res.data.info)
-      })
+    .then(res => {
+      setCharacters(adjustStarred(res.data.results))
+      setMyPage(res.data.info)
+    })
     setFilterValue('')
     setGenderValue('')
     setStatusValue('')
-    setLoading(true)
+    setLoading(false)
   }
 
   const handleFilterClick = async () => {
     try {
-      await
-        axios.get(`${URL}?${URLFilter}`)
-          .then(res => {
-            //  setCharacters(adjustStarred(res.data.results))
-            setMyPage(res.data.info)
-          })
-      setLoading(true)
+      await 
+      axios.get(`${URL}?${URLFilter}`)
+        .then(res => {
+          setCharacters(adjustStarred(res.data.results))
+          setMyPage(res.data.info)
+      })
+      setLoading(false)
     } catch (error) {
       history.push('/error')
     }
@@ -127,27 +122,26 @@ export default function Home() {
   }
 
   useEffect(() => {
-    if (characters.length === 0) {
-      axios.get(`${URL}?${URLFilter}`)
-        .then(res => {
-          const charactersArray = adjustStarred(res.data.results)
-          dispatch(addCharacters(charactersArray))
-          //setCharacters(adjustStarred(res.data.results))
-          setMyPage(res.data.info)
-        })
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }
-    setLoading(true)
+    axios.get(`${URL}?${URLFilter}`)
+    .then(res => {
+      setCharacters(adjustStarred(res.data.results))
+      setMyPage(res.data.info)
+    })
+    setLoading(false)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
-    setMyPage,
-    setFilterValue,
-    setGenderValue,
+    setCharacters, 
+    setMyPage, 
+    setFilterValue, 
+    setGenderValue, 
     setStatusValue
   ])
 
   return (
     <div className={classes.root}>
       {loading ?
+        <SpinnerRoundOutlined color='#3f51b5' size='80' />
+        :
         <>
           <form className={classes.form} noValidate autoComplete="off">
             <Input
@@ -176,8 +170,7 @@ export default function Home() {
             onChange={handleChange}
           />
         </>
-        :
-        <SpinnerRoundOutlined color='#3f51b5' size='80' />
+
       }
     </div>
   )

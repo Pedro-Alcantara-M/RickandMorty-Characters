@@ -4,6 +4,7 @@ import {
   Toolbar, 
   Typography 
 } from '@material-ui/core'
+import logo from '../assets/rick-and-rorty.svg'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -15,6 +16,12 @@ const useStyles = makeStyles((theme: Theme) =>
     title: {
       flexGrow: 1,
     },
+
+    img: {
+      width: 200,
+      padding: theme.spacing(1),
+      transform: 'translatex(13px)',
+    }
   }),
 );
 
@@ -26,7 +33,7 @@ export default function Footer() {
       <AppBar position="static">
         <Toolbar>
           <Typography align="center" variant="h6" className={classes.title}>
-            Rick and Morty
+            <img className={classes.img} src={logo} alt="Logo Rick and Morty"/>
           </Typography>
         </Toolbar>
       </AppBar>
