@@ -13,7 +13,6 @@ const useStyles = makeStyles((theme: Theme) =>
       alignItems: 'center',
       flexGrow: 1,
       background: theme.palette.grey[300],
-      margin: theme.spacing(1),
       height: '100%',
       minHeight: '83vh',
     },

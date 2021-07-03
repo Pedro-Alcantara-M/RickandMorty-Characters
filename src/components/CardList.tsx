@@ -12,12 +12,12 @@ const useStyles = makeStyles((theme: Theme) =>
       justifyContent: 'center',
       flexGrow: 1,
       background: theme.palette.grey[300],
-      margin: theme.spacing(1),
     },
 
     cards: {
       display: 'flex',
       flexDirection: 'row',
+      justifyContent: 'center',
       flexWrap: 'wrap',
     },
 
@@ -43,7 +43,7 @@ export default function CardList(props: CardListProps ) {
   const classes = useStyles();
 
   return (
-    <div>
+    <div className={classes.cards}>
       <div className={classes.cards}>
       {props.characters.map((character: CharacterProps) => (
         <Cards

@@ -1,6 +1,9 @@
 import axios from 'axios'
 import { useState, useEffect } from 'react';
 import { useHistory } from "react-router-dom";
+import { useSelector, useDispatch } from 'react-redux'
+import { addCharacters, removeCharacters } from '../store/store'
+import { selectCharacters } from '../store/store'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { SpinnerRoundOutlined } from 'spinners-react';
 import {
@@ -17,19 +20,21 @@ const useStyles = makeStyles((theme: Theme) =>
     root: {
       display: 'flex',
       flexDirection: 'column',
-      alignItems:'center',
+      alignItems: 'center',
     },
 
     form: {
-      margin: theme.spacing(2 ),
+      margin: theme.spacing(2),
       display: 'flex',
       flexDirection: 'row',
     },
 
     filtername: {
-      transform: 'translateY(-100)',
+      transform: 'translatey(-8px)',
+      '& input': {
+        transform: 'translatey(15px)',
+      }
     },
-    
 
     cards: {
       display: 'flex',
@@ -44,9 +49,11 @@ const useStyles = makeStyles((theme: Theme) =>
     },
 
     button: {
+      height: 32,
       color: theme.palette.primary.contrastText,
       background: theme.palette.primary.main,
-      marginRight: theme.spacing(1),
+      margin: theme.spacing(1),
+      transform: 'translatey(15px)',
     },
   }),
 );
@@ -54,10 +61,12 @@ const useStyles = makeStyles((theme: Theme) =>
 export default function Home() {
   const classes = useStyles();
   const history = useHistory();
+  const dispatch = useDispatch()
+  const characters = useSelector(selectCharacters)
   const [loading, setLoading] = useState<boolean>(false)
   const [statusValue, setStatusValue] = useState<string>('')
   const [genderValue, setGenderValue] = useState<string>('')
-  const [characters, setCharacters] = useState<CardListProps[]>([])
+  //const [characters, setCharacters] = useState<CardListProps[]>([])
   const [page, setPage] = useState(1);
   const [myPage, setMyPage] = useState<CardListProps>();
   const [filterValue, setFilterValue] = useState('')
@@ -65,16 +74,16 @@ export default function Home() {
   const URL = 'https://rickandmortyapi.com/api/character/'
   const URLFilter = `name=${filterValue}&status=${statusValue}&gender=${genderValue}
 `
-  const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
+  const handleChange = (value: number) => {
     setPage(value)
     axios.get(`${URL}?page=${value}&${URLFilter}`)
-          .then(res => {
-            setCharacters(res.data.results)
-          })
-          setLoading(true)
+      .then(res => {
+        //setCharacters(res.data.results)
+      })
+    setLoading(true)
   };
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement> | any) => {
+  const handleNameChange = (event: React.ChangeEvent<HTMLInputElement> | any) => {
     setFilterValue(event.target.value)
   };
 
@@ -86,87 +95,90 @@ export default function Home() {
   };
 
   const handleRefreshClick = () => {
-      axios.get(`${URL}`)
-        .then(res => {
-          setCharacters(adjustStarred(res.data.results))
-          setMyPage(res.data.info)
+    axios.get(`${URL}`)
+      .then(res => {
+        //    setCharacters(adjustStarred(res.data.results))
+        setMyPage(res.data.info)
       })
-      setFilterValue('')
-      setGenderValue('')
-      setStatusValue('')
-      setLoading(true)
+    setFilterValue('')
+    setGenderValue('')
+    setStatusValue('')
+    setLoading(true)
   }
 
-  const handleClick = async () => {
+  const handleFilterClick = async () => {
     try {
-      await 
-      axios.get(`${URL}?${URLFilter}`)
-        .then(res => {
-          setCharacters(adjustStarred(res.data.results))
-          setMyPage(res.data.info)
-      })
+      await
+        axios.get(`${URL}?${URLFilter}`)
+          .then(res => {
+            //  setCharacters(adjustStarred(res.data.results))
+            setMyPage(res.data.info)
+          })
       setLoading(true)
-    } catch(error) {
-       history.push('/error')
+    } catch (error) {
+      history.push('/error')
     }
   }
   const adjustStarred = (data: any) => {
-    return data.map((char: any)=>({
-      ...char, 
+    return data.map((char: any) => ({
+      ...char,
       starred: false
     }))
   }
 
-useEffect(() => {
-  axios.get(`${URL}?${URLFilter}`)
-  .then(res => {
-    setCharacters(adjustStarred(res.data.results))
-    setMyPage(res.data.info)
-  })
-  setLoading(true)
-// eslint-disable-next-line react-hooks/exhaustive-deps
-}, [
-  setCharacters, 
-  setMyPage, 
-  setFilterValue, 
-  setGenderValue, 
-  setStatusValue
-])
+  useEffect(() => {
+    if (characters.length === 0) {
+      axios.get(`${URL}?${URLFilter}`)
+        .then(res => {
+          const charactersArray = adjustStarred(res.data.results)
+          dispatch(addCharacters(charactersArray))
+          //setCharacters(adjustStarred(res.data.results))
+          setMyPage(res.data.info)
+        })
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }
+    setLoading(true)
+  }, [
+    setMyPage,
+    setFilterValue,
+    setGenderValue,
+    setStatusValue
+  ])
 
   return (
     <div className={classes.root}>
-    { loading ?
-    <>
-      <form className={classes.form} noValidate autoComplete="off">
-      <Input 
-        className={classes.filtername}
-        placeholder="Character Name"
-        value={filterValue} 
-        onChange={handleChange}
-      />
-      <Filter
-      StatusValue={statusValue}
-      GenderValue={genderValue}
-      onStatusChange={handleStatusChange}
-      onGenderChange={handleGenderChange}
-      />
-      <Button variant="contained" className={classes.button} onClick={handleClick}>
-        <SearchIcon/>
-      </Button>
-      <Button variant="contained" className={classes.button} onClick={handleRefreshClick}>
-        <CachedIcon/>Refresh
-      </Button>
-      </form>
-      <CardList 
-        characters={characters}
-        count={myPage?.pages}
-        page={page}
-        onChange={handlePageChange}
-      />
-      </>
-      :
-      <SpinnerRoundOutlined color='#3f51b5' size='80'/>
-    }
+      {loading ?
+        <>
+          <form className={classes.form} noValidate autoComplete="off">
+            <Input
+              className={classes.filtername}
+              placeholder="Character Name"
+              value={filterValue}
+              onChange={handleNameChange}
+            />
+            <Filter
+              StatusValue={statusValue}
+              GenderValue={genderValue}
+              onStatusChange={handleStatusChange}
+              onGenderChange={handleGenderChange}
+            />
+            <Button variant="contained" className={classes.button} onClick={handleFilterClick}>
+              <SearchIcon />
+            </Button>
+            <Button variant="contained" className={classes.button} onClick={handleRefreshClick}>
+              <CachedIcon />Refresh
+            </Button>
+          </form>
+          <CardList
+            characters={characters}
+            count={myPage?.pages}
+            page={page}
+            onChange={handleChange}
+          />
+        </>
+        :
+        <SpinnerRoundOutlined color='#3f51b5' size='80' />
+      }
     </div>
   )
 }
