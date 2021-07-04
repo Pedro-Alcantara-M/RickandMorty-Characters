@@ -24,13 +24,29 @@ const useStyles = makeStyles((theme: Theme) =>
       margin: theme.spacing(2),
       display: 'flex',
       flexDirection: 'row',
+
+      [theme.breakpoints.down('sm')]: {
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItem: 'center',
+      },
     },
 
     filtername: {
       transform: 'translatey(-8px)',
       '& input': {
         transform: 'translatey(15px)',
-      }
+      },
+
+      [theme.breakpoints.down('sm')]: {
+        justifyContend: 'start',
+        transform: 'none',
+
+        '& input': {
+          transform: 'none',
+        },
+      },
     },
 
     cards: {
@@ -69,7 +85,7 @@ export default function Home() {
   const URL = 'https://rickandmortyapi.com/api/character/'
   const URLFilter = `name=${filterValue}&status=${statusValue}&gender=${genderValue}
 `
-  const handleChange = (value: number) => {
+  const handleChange = (event: React.ChangeEvent<unknown>, value: number)  => {
     setPage(value)
     axios.get(`${URL}?page=${value}&${URLFilter}`)
     .then(res => {

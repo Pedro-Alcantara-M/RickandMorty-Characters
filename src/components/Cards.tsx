@@ -19,6 +19,10 @@ const useStyles = makeStyles((theme: Theme) =>
     width: 320,
     margin: theme.spacing(2),
 
+    [theme.breakpoints.down('xs')]: {
+      width: 300,
+    },
+
     "& h2": {
       fontSize: 18,
     },
