@@ -1,6 +1,8 @@
 import axios from 'axios'
 import { useState, useEffect } from 'react';
 import { useHistory } from "react-router-dom";
+import { useSelector } from 'react-redux'
+import { selectFavorites, CharacterProps } from '../store/store'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { SpinnerRoundOutlined } from 'spinners-react';
 import {
@@ -11,6 +13,7 @@ import SearchIcon from '@material-ui/icons/Search';
 import CachedIcon from '@material-ui/icons/Cached';
 import Filter from '../components/Filter'
 import CardList, { CardListProps } from '../components/CardList';
+import { Pagination } from '@material-ui/lab';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -71,26 +74,30 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
+
+
+
 export default function Home() {
   const classes = useStyles();
   const history = useHistory();
+  const favorites = useSelector(selectFavorites)
   const [loading, setLoading] = useState<boolean>(true)
   const [statusValue, setStatusValue] = useState<string>('')
   const [genderValue, setGenderValue] = useState<string>('')
   const [page, setPage] = useState(1);
   const [characters, setCharacters] = useState<CardListProps[]>([])
-  const [myPage, setMyPage] = useState<CardListProps>();
+  const [myPage, setMyPage] = useState<string | any>();
   const [filterValue, setFilterValue] = useState('')
 
   const URL = 'https://rickandmortyapi.com/api/character/'
   const URLFilter = `name=${filterValue}&status=${statusValue}&gender=${genderValue}
 `
-  const handleChange = (event: React.ChangeEvent<unknown>, value: number)  => {
+  const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
     setPage(value)
     axios.get(`${URL}?page=${value}&${URLFilter}`)
-    .then(res => {
-      setCharacters(res.data.results)
-    })
+      .then(res => {
+        setCharacters(res.data.results)
+      })
     setLoading(false)
   };
 
@@ -107,10 +114,10 @@ export default function Home() {
 
   const handleRefreshClick = () => {
     axios.get(`${URL}`)
-    .then(res => {
-      setCharacters(adjustStarred(res.data.results))
-      setMyPage(res.data.info)
-    })
+      .then(res => {
+        setCharacters(adjustStarred(res.data.results))
+        setMyPage(res.data.info)
+      })
     setFilterValue('')
     setGenderValue('')
     setStatusValue('')
@@ -119,37 +126,43 @@ export default function Home() {
 
   const handleFilterClick = async () => {
     try {
-      await 
-      axios.get(`${URL}?${URLFilter}`)
-        .then(res => {
-          setCharacters(adjustStarred(res.data.results))
-          setMyPage(res.data.info)
-      })
+      await
+        axios.get(`${URL}?${URLFilter}`)
+          .then(res => {
+            setCharacters(adjustStarred(res.data.results))
+            setMyPage(res.data.info)
+          })
       setLoading(false)
     } catch (error) {
       history.push('/error')
     }
   }
-  const adjustStarred = (data: any) => {
-    return data.map((char: any) => ({
-      ...char,
-      starred: false
-    }))
+
+ const adjustStarred = (data: any) => {
+    return data.map((char: CharacterProps) => {
+      const stars = favorites.some((e) => e.id === char.id && e.starred)
+      return {
+        ...char,
+      starred: stars
+    } 
+    })
   }
+
 
   useEffect(() => {
     axios.get(`${URL}?${URLFilter}`)
-    .then(res => {
-      setCharacters(adjustStarred(res.data.results))
-      setMyPage(res.data.info)
-    })
-    setLoading(false)
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+      .then(res => {
+        setCharacters(adjustStarred(res.data.results))
+        setMyPage(res.data.info)
+        })
+        setLoading(false)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
-    setCharacters, 
-    setMyPage, 
-    setFilterValue, 
-    setGenderValue, 
+    favorites,
+    setCharacters,
+    setMyPage,
+    setFilterValue,
+    setGenderValue,
     setStatusValue
   ])
 
@@ -181,10 +194,16 @@ export default function Home() {
           </form>
           <CardList
             characters={characters}
-            count={myPage?.pages}
-            page={page}
-            onChange={handleChange}
           />
+          <div className={classes.pagination} >
+          <Pagination  
+            color='primary'
+            count={myPage?.pages} 
+            page={page} 
+            onChange={handleChange}
+            />  
+          </div>
+         
         </>
 
       }
