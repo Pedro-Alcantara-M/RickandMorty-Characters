@@ -1,7 +1,5 @@
 # Rick and Morty Characters
 
-Este aplicativo foi criado para o teste técnico da Let's Delivery.
-
 ## Iniciando:
 
  - Baixe este repositorio utilizando o comando `git clone` [https://github.com/Pedro-Alcantara-M/RickandMorty-Characters](https://github.com/Pedro-Alcantara-M/RickandMorty-Characters)

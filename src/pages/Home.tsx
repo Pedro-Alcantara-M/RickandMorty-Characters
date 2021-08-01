@@ -96,7 +96,7 @@ export default function Home() {
     setPage(value)
     axios.get(`${URL}?page=${value}&${URLFilter}`)
       .then(res => {
-        setCharacters(res.data.results)
+        setCharacters(adjustStarred(res.data.results))
       })
     setLoading(false)
   };
@@ -113,7 +113,7 @@ export default function Home() {
   };
 
   const handleRefreshClick = () => {
-    axios.get(`${URL}`)
+    axios.get(`${URL}?page=${page}`)
       .then(res => {
         setCharacters(adjustStarred(res.data.results))
         setMyPage(res.data.info)
@@ -127,7 +127,7 @@ export default function Home() {
   const handleFilterClick = async () => {
     try {
       await
-        axios.get(`${URL}?${URLFilter}`)
+        axios.get(`${URL}?page=${page}&${URLFilter}`)
           .then(res => {
             setCharacters(adjustStarred(res.data.results))
             setMyPage(res.data.info)
@@ -150,7 +150,7 @@ export default function Home() {
 
 
   useEffect(() => {
-    axios.get(`${URL}?${URLFilter}`)
+    axios.get(`${URL}?page=${page}&${URLFilter}`)
       .then(res => {
         setCharacters(adjustStarred(res.data.results))
         setMyPage(res.data.info)
