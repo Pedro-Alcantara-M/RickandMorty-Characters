@@ -74,9 +74,6 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-
-
-
 export default function Home() {
   const classes = useStyles();
   const history = useHistory();
@@ -86,13 +83,14 @@ export default function Home() {
   const [genderValue, setGenderValue] = useState<string>('')
   const [page, setPage] = useState(1);
   const [characters, setCharacters] = useState<CardListProps[]>([])
-  const [myPage, setMyPage] = useState<string | any>();
+  const [myPage, setMyPage] = useState<number>();
   const [filterValue, setFilterValue] = useState('')
 
   const URL = 'https://rickandmortyapi.com/api/character/'
   const URLFilter = `name=${filterValue}&status=${statusValue}&gender=${genderValue}
 `
   const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
+    setLoading(true)
     setPage(value)
     axios.get(`${URL}?page=${value}&${URLFilter}`)
       .then(res => {
@@ -101,22 +99,23 @@ export default function Home() {
     setLoading(false)
   };
 
-  const handleNameChange = (event: React.ChangeEvent<HTMLInputElement> | any) => {
+  const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setFilterValue(event.target.value)
   };
 
-  const handleStatusChange = (event: React.ChangeEvent<unknown> | any) => {
-    setStatusValue(event.target.value)
+  const handleStatusChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+    setStatusValue(event.target.value as string)
   };
-  const handleGenderChange = (event: React.ChangeEvent<unknown> | any) => {
-    setGenderValue(event.target.value)
+  const handleGenderChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+    setGenderValue(event.target.value as string)
   };
 
   const handleRefreshClick = () => {
+    setLoading(true)
     axios.get(`${URL}?page=${page}`)
       .then(res => {
         setCharacters(adjustStarred(res.data.results))
-        setMyPage(res.data.info)
+        setMyPage(res.data.info.pages)
       })
     setFilterValue('')
     setGenderValue('')
@@ -125,12 +124,13 @@ export default function Home() {
   }
 
   const handleFilterClick = async () => {
+    setLoading(true)
     try {
       await
         axios.get(`${URL}?page=${page}&${URLFilter}`)
           .then(res => {
             setCharacters(adjustStarred(res.data.results))
-            setMyPage(res.data.info)
+            setMyPage(res.data.info.pages)
           })
       setLoading(false)
     } catch (error) {
@@ -148,23 +148,18 @@ export default function Home() {
     })
   }
 
-
   useEffect(() => {
+    setLoading(true)
     axios.get(`${URL}?page=${page}&${URLFilter}`)
       .then(res => {
         setCharacters(adjustStarred(res.data.results))
-        setMyPage(res.data.info)
+        setMyPage(res.data.info.pages)
         })
         setLoading(false)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    favorites,
-    setCharacters,
-    setMyPage,
-    setFilterValue,
-    setGenderValue,
-    setStatusValue
-  ])
+  }, [])
+
+  console.log('characters', characters)
 
   return (
     <div className={classes.root}>
@@ -189,7 +184,7 @@ export default function Home() {
               <SearchIcon />
             </Button>
             <Button variant="contained" className={classes.button} onClick={handleRefreshClick}>
-              <CachedIcon />Refresh
+              <CachedIcon style={{marginRight: '5px'}}/>Refresh
             </Button>
           </form>
           <CardList
@@ -198,7 +193,7 @@ export default function Home() {
           <div className={classes.pagination} >
           <Pagination  
             color='primary'
-            count={myPage?.pages} 
+            count={myPage} 
             page={page} 
             onChange={handleChange}
             />  

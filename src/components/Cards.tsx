@@ -50,10 +50,10 @@ type CharacterProps = {
   species: string;
   gender: string;
   origin: {
-    name:string;
+    name: string;
   } | any
   starred: boolean;
-  onClick?: React.MouseEventHandler<HTMLDivElement> | any;
+  onClick?: React.MouseEventHandler<HTMLDivElement>;
 }
 
 export default function Cards(props: CharacterProps ) {

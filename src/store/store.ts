@@ -1,6 +1,7 @@
 import { configureStore, createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export type CharacterProps = {
+    [x: string]: any;
     id: number,
     name: string,
     image: string,
@@ -14,13 +15,13 @@ export type CharacterProps = {
 }
 
 type FavoriteProps = {
-  favorites: CharacterProps[];
+  characters: CharacterProps[];
 }
 
 type RootState = ReturnType<typeof store.getState>
 
 const initialState: FavoriteProps = {
-  favorites: [],
+  characters: [],
 }
 
 const favoriteSlice = createSlice({
@@ -29,8 +30,8 @@ const favoriteSlice = createSlice({
 
    reducers: {
     addFavorite: (state, action: PayloadAction<CharacterProps>) => {
-      state.favorites = [
-        ...state.favorites, 
+      state.characters = [
+        ...state.characters, 
         {
           id: action.payload.id,
           name: action.payload.name,
@@ -45,7 +46,7 @@ const favoriteSlice = createSlice({
     },
 
      removeFavorite: (state, action: PayloadAction<number>) => {
-        state.favorites = state.favorites.filter(({id}) => id !== action.payload)
+        state.characters = state.characters.filter(({id}) => id !== action.payload)
         return state
      },
      },
@@ -60,7 +61,7 @@ const store = configureStore({
   },
 })
 
-export const selectFavorites = (state: RootState) => state.favorites.favorites
+export const selectFavorites = (state: RootState) => state.favorites.characters
 
 export default store
 

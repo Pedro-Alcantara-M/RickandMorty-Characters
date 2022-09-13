@@ -1,7 +1,6 @@
 
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import Cards from '../components/Cards'
-import { CharacterProps } from '../store/store'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -29,18 +28,31 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-export type CardListProps = {
-  characters: CharacterProps | any;
-  onClick?: React.MouseEventHandler<HTMLDivElement> | any;
+export type CharacterProps = {
+  id: number,
+  name: string,
+  image: string,
+  status: string,
+  species: string,
+  gender: string,
+  origin:{
+    name: string,
+  },
+  starred: boolean,
 }
 
-export default function CardList(props: CardListProps) {
+export type CardListProps = {
+  characters?: CharacterProps[];
+  onClick?: () => void;
+}
+
+export default function CardList({characters}:CardListProps) {
   const classes = useStyles();
 
   return (
     <div className={classes.cards}>
       <div className={classes.cards}>
-        {props.characters.map((character: CharacterProps) => (
+        {characters?.map((character: CharacterProps) => (
           <Cards
             key={character.id}
             id={character.id}
